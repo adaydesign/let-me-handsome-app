@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Barber shops</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header collapse="condense">
+    <ion-toolbar color="secondary">
+      <ion-title size="large">Barber Shops</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list>
+    <ion-list-header>
+      รายการร้านตัดผมที่เปิดบริการ
+    </ion-list-header>
+
+    <ion-list *ngIf="availableShops.length > 0">
+      <ion-item-sliding *ngFor="let shop of availableShops" #slidingItem>
+        <!-- <app-shop-item [shop]="shop"></app-shop-item> -->
+        <ion-item [routerLink]="['/','tabs','shops','shop-detail',shop.id]" detail>
+          <ion-thumbnail slot="start">
+            <ion-img [src]="shop.photo"></ion-img>
+          </ion-thumbnail>
+          <ion-label>
+            <h2>{{ shop.name }}</h2>
+            <h4>
+              <ion-icon name="call-sharp"></ion-icon> โทร. {{ shop.tel }}, มือถือ {{ shop.mobile}}
+            </h4>
+            <h4>
+              <ion-icon name="alarm-outline"></ion-icon> เปิดเวลา {{ shop.openTime }}
+            </h4>
+            <p>{{ shop.welcomeText }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
+
+    <ion-list *ngIf="availableShops.length === 0">
+      <ion-item-sliding *ngFor="let i of arrayOne(12)" #slidingItem>
+        <ion-item>
+          <ion-thumbnail slot="start">
+            <ion-skeleton-text animated style="width: 50%">
+            </ion-skeleton-text>
+          </ion-thumbnail>
+          <ion-label>
+            <h2>
+              <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+            </h2>
+            <h4>
+              <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+            </h4>
+            <h4>
+              <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+            </h4>
+            <p>
+              <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
+
+  </ion-list>
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "Let Me Handsome",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

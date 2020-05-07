@@ -1,0 +1,154 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/shops"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{shopDetail.name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card>
+    <img src="{{shopDetail.photo}}" />
+    <ion-card-header>
+      <ion-card-subtitle>ยินดีต้อนรับ</ion-card-subtitle>
+      <ion-card-title>{{shopDetail.name}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      {{shopDetail.welcomeText}}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card-content fullscreen>
+    <ion-list>
+      <ion-list-header color="primary">จำนวนลูกค้าที่กำลังรอ</ion-list-header>
+      <ion-item>
+        <ion-label>ยื่นจอง(คน)</ion-label>
+        <ion-badge slot="end">{{bookingCount}}</ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-label>เข้าคิว(คน)</ion-label>
+        <ion-badge color="secondary" slot="end">{{waitingCount}}</ion-badge>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>เลือกบริการ</ion-card-title>
+      <ion-card-subtitle>คุณลูกค้าต้องการใช้บริการเลือกจองคิวได้เลย</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let service of listServices">
+          <ion-label>{{service.name}} ({{service.price}}฿)</ion-label>
+          <ion-checkbox slot="end" [(ngModel)]="service.isChecked" value="service.id"
+            (ionChange)="updateSelectServices()"></ion-checkbox>
+        </ion-item>
+      </ion-list>
+      <ion-item lines="none">
+        <ion-icon name="cash-outline" slot="start"></ion-icon>
+        <ion-label color="primary">รวมราคา</ion-label>
+        <ion-label color="secondary">{{totalServicePrice}} บาท</ion-label>
+      </ion-item>
+    </ion-card-content>
+
+    <ion-card-content *ngIf="!isLogin">
+      <ion-button color="secondary" (click)="gotoLoginTab()" expand="block">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        กรุณาล็อกอินก่อนทำการจองคิว
+      </ion-button>
+    </ion-card-content>
+
+    <ion-card-content *ngIf="isLogin">
+      <ion-card-subtitle>ผู้ใช้บริการ</ion-card-subtitle>
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img src="{{userData.profilePictureURL}}" />
+        </ion-avatar>
+        <ion-label>
+          @{{userData.username}}
+        </ion-label>
+      </ion-item>
+      <ion-button color="primary" (click)="onBookQueue()" expand="block">
+        <ion-icon slot="start" name="star"></ion-icon>
+        จองคิวตัดผม
+      </ion-button>
+    </ion-card-content>
+
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>ที่อยู่และการติดต่อ</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-icon name="alarm-outline" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">เปิด {{ shopDetail.openTime }}</ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="call-sharp" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">โทร {{ shopDetail.tel }}</ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="phone-portrait-sharp" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">มือถือ {{ shopDetail.mobile}}</ion-label>
+      </ion-item>
+    </ion-card-content>
+
+    <ion-card-header>
+      <ion-card-subtitle>ที่อยู่ร้าน</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      {{shopDetail.address}}
+    </ion-card-content>
+
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>รีวิวร้าน</ion-card-title>
+      <ion-card-subtitle>คะแนนและการแนะนำ</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content *ngIf="isLogin">
+      <ion-chip color="secondary">
+        <ion-avatar>
+          <img src="{{userData.profilePictureURL}}">
+        </ion-avatar>
+        <ion-label>@{{userData.username}}</ion-label>
+      </ion-chip>
+      <form #f="ngForm" (ngSubmit)="onCommentSubmit(f)">
+        <ion-item lines="none">
+          <ion-textarea ngModel name="comment" required placeholder="เพิ่มความคิดเห็นของคุณ..."></ion-textarea>
+        </ion-item>
+        <ion-button type="submit" color="secondary" size="small" expand="block">
+          <ion-icon slot="start" name="send-outline"></ion-icon>
+          แสดงความคิดเห็น
+        </ion-button>
+      </form>
+    </ion-card-content>
+
+    <ion-list *ngIf="shopDetail.comments.length > 0">
+      <ion-item *ngFor="let cmm of shopDetail.comments">
+        <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">{{cmm.commentText}}</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-card-content *ngIf="shopDetail.comments.length === 0">
+      <ion-list>
+        <p>ยังไม่มีการรีวิว :)</p>
+      </ion-list>
+    </ion-card-content>
+
+
+  </ion-card>
+
+
+</ion-content>

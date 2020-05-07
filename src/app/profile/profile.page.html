@@ -1,0 +1,202 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header collapse="condense">
+    <ion-toolbar color="primary">
+      <ion-title size="large">Profile</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <!-- isLogin -->
+  <!-- <ngif></ngif> -->
+  <ion-card *ngIf="!isLogin && !displaySignUp">
+    <ion-card-header>
+      <ion-card-subtitle>welcome to LMH</ion-card-subtitle>
+      <ion-card-title>ยินตีต้อนรับสู่แอพ LMH</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      กรุณาล็อกอินเข้าสู่ะบบก่อนทำการจองการตัดผมที่ร้านหรือดูข้อมูลการใช้บริการต่างๆ ในแอปพลิเคชัน
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!isLogin && !displaySignUp">
+    <ion-card-header>
+      <ion-card-subtitle>LOGIN</ion-card-subtitle>
+      <ion-card-title>เข้าสู่ระบบ</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-list>
+                <ion-item>
+                  <ion-label position="floating">ชื่อบัญชี</ion-label>
+                  <ion-input type="text" ngModel name="identifier" required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">รหัสผ่าน</ion-label>
+                  <ion-input type="password" ngModel name="password" required>
+                  </ion-input>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button type="submit" color="primary" expand="block">
+                เข้าสู่ระบบ
+              </ion-button>
+              <ion-button type="button" color="secondary" fill="clear" expand="block" (click)="showSignUpCard(true)">
+                สร้างบัญชีใหม่
+              </ion-button>
+
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!isLogin && displaySignUp">
+    <ion-card-header>
+      <ion-card-subtitle>REGISTER</ion-card-subtitle>
+      <ion-card-title>สมัครบัญชีใหม่</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form #f="ngForm" (ngSubmit)="onRegisterSubmit(f)">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-list>
+                <ion-item>
+                  <ion-label position="floating">ชื่อบัญชี</ion-label>
+                  <ion-input type="text" ngModel name="username" required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">รหัสผ่าน</ion-label>
+                  <ion-input type="password" ngModel name="password" required>
+                  </ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">ชื่อ-นามสกุล</ion-label>
+                  <ion-input type="text" ngModel name="fullName" required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">email</ion-label>
+                  <ion-input type="email" ngModel name="email" required></ion-input>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button type="submit" color="secondary" expand="block">
+                สร้างบัญชีใหม่
+              </ion-button>
+              <ion-button type="button" color="primary" fill="clear" expand="block" (click)="showSignUpCard(false)">
+                ยกเลิก
+              </ion-button>
+
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="isLogin">
+    <ion-card-header>
+      <ion-card-subtitle>ยินตีต้อนรับสู่แอพ LMH</ion-card-subtitle>
+      <ion-item>
+        <ion-avatar slot="start">
+          <img src="{{userData.profilePictureURL}}" />
+        </ion-avatar>
+        <ion-card-title>คุณ {{userData.fullName}}</ion-card-title>
+      </ion-item>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>account : @{{userData.username}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>email : {{userData.email}}</ion-label>
+      </ion-item>
+    </ion-card-content>
+    <ion-card-content>
+      <ion-button color="primary" expand="block" (click)="onLogout()">
+        ออกจากระบบ
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="isLogin">
+    <ion-card-header>
+      <ion-card-title>รายการคิวจอง</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Segment -->
+      <ion-segment (ionChange)="segmentChanged($event)" value="{{queueFilter}}">
+        <ion-segment-button value="current">
+          <ion-icon name="star-outline"></ion-icon>
+          <ion-label>คิวปัจจุบัน</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="all">
+          <ion-icon name="list-outline"></ion-icon>
+          <ion-label>ทั้งหมด</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <!-- Queue -->
+      <ion-list *ngIf="listQueue.length > 0">
+        <ion-item-sliding *ngFor="let q of listQueue" #slidingItem>
+          <ion-item
+            *ngIf="q && q.barberShopID && q.queueStatusID && (queueFilter=='all' || (queueFilter=='current' && q.queueStatusID.id < 5))">
+            <ion-label>
+              <h2>
+                <ion-icon name="cut-outline"></ion-icon> {{q.barberShopID.shopName}}
+              </h2>
+              <h3>ค่าบริการ : {{q.totalPrice}}฿</h3>
+              <h3>สถานะคิว :
+                <ion-note color="success" *ngIf="q.queueStatusID.id == 5">
+                  {{q.queueStatusID.name}}</ion-note>
+                <ion-note color="primary" *ngIf="q.queueStatusID.id == 2">
+                  {{q.queueStatusID.name}}</ion-note>
+                <ion-note color="danger" *ngIf="q.queueStatusID.id >= 10">
+                  {{q.queueStatusID.name}}</ion-note>
+                <ion-note *ngIf="q.queueStatusID.id != 2 && q.queueStatusID.id != 5 && q.queueStatusID.id < 10">
+                  {{q.queueStatusID.name}}</ion-note>
+              </h3>
+              <h3 *ngIf="q.countWaitingOrder">จำนวนรอคิวของร้าน :
+                <ion-note color="dark">
+                  {{q.countWaitingOrder.count}}</ion-note>
+              </h3>
+              <h3 *ngIf="q.countWaitingOrder">ลำดับของคุณ :
+                <ion-note color="primary">
+                  {{q.countWaitingOrder.atOrder}}</ion-note>
+              </h3>
+              <p>{{q.bookingDate}}</p>
+            </ion-label>
+            <ion-note slot="end" color="success" *ngIf="q && q.queueStatusID && q.queueStatusID.id < 5">On</ion-note>
+          </ion-item>
+          <ion-item-options side="end" *ngIf="q && q.queueStatusID && q.queueStatusID.id < 10">
+            <ion-item-option (click)="cancelQueue(q)">ยกเลิก</ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+
+      <ion-card-content *ngIf="listQueue.length === 0">
+        <ion-list>
+          <p>ยังไม่มีการจองคิว</p>
+        </ion-list>
+      </ion-card-content>
+    </ion-card-content>
+  </ion-card>
+
+
+</ion-content>
